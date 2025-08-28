@@ -1,0 +1,505 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <title>La Cala | Wine Selector v18</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial; }
+    .sticky-header { position: sticky; top: 0; z-index: 50; backdrop-filter: saturate(180%) blur(6px); }
+  </style>
+</head>
+<body class="bg-neutral-50">
+  <div id="root"></div>
+
+  <script>
+  const PRIMARY_WINES = [{"id": "SPL1", "name": "Arione Contessa di Castiglione Brut", "color": "white", "body": "light", "texture": NaN, "flavor": "mineral", "region": "Piemonte", "price": 650, "priceLevel": "entry", "secondary": false, "btg": false, "btgPrice": NaN, "tags": ["citrus", "mineral", "saline"]}, {"id": "SP1", "name": "Villa Loren Prosecco DOC Extra Dry", "color": "white", "body": "light", "texture": NaN, "flavor": "fruity", "region": "Veneto", "price": 650, "priceLevel": "entry", "secondary": false, "btg": true, "btgPrice": 120.0, "tags": ["citrus", "stonefruit"]}, {"id": "W20", "name": "Il Pumo – Malvasia & Sauvignon 2023", "color": "white", "body": "light", "texture": NaN, "flavor": "fruity", "region": "Puglia", "price": 600, "priceLevel": "entry", "secondary": false, "btg": true, "btgPrice": 120.0, "tags": ["citrus", "tropical"]}, {"id": "W140", "name": "Terre dei Buth Pinot Grigio 2023", "color": "white", "body": "light", "texture": NaN, "flavor": "mineral", "region": "Venezia", "price": 680, "priceLevel": "entry", "secondary": false, "btg": true, "btgPrice": 120.0, "tags": ["saline", "mineral", "citrus"]}, {"id": "W40", "name": "Barba – Trebbiano d’Abruzzo 2024", "color": "white", "body": "light", "texture": NaN, "flavor": "mineral", "region": "Abruzzo", "price": 940, "priceLevel": "entry", "secondary": false, "btg": false, "btgPrice": NaN, "tags": ["mineral", "citrus"]}, {"id": "W80", "name": "Villa Antinori Bianco (Trebbiano & Malvasia)", "color": "white", "body": "light", "texture": NaN, "flavor": "mineral", "region": "Toscana", "price": 940, "priceLevel": "entry", "secondary": false, "btg": false, "btgPrice": NaN, "tags": ["floral", "mineral"]}, {"id": "W50", "name": "Masseria Li Veli Fiano 2022", "color": "white", "body": "medium", "texture": NaN, "flavor": "mineral", "region": "Puglia", "price": 940, "priceLevel": "medium", "secondary": false, "btg": false, "btgPrice": NaN, "tags": ["floral", "mineral", "saline"]}, {"id": "W160", "name": "La Castellina 'Rugiada' Chardonnay & Malvasia", "color": "white", "body": "medium", "texture": NaN, "flavor": "fruity", "region": "Toscana", "price": 940, "priceLevel": "entry", "secondary": false, "btg": false, "btgPrice": NaN, "tags": ["stonefruit", "citrus"]}, {"id": "W70", "name": "Cantine De Falco Chardonnay 2023", "color": "white", "body": "medium", "texture": NaN, "flavor": "fruity", "region": "Puglia", "price": 940, "priceLevel": "entry", "secondary": false, "btg": false, "btgPrice": NaN, "tags": ["stonefruit"]}, {"id": "W90", "name": "Umani Ronchi 'Vellodoro' Pecorino 2023", "color": "white", "body": "medium", "texture": NaN, "flavor": "mineral", "region": "Abruzzo", "price": 940, "priceLevel": "medium", "secondary": false, "btg": false, "btgPrice": NaN, "tags": ["mineral", "floral"]}, {"id": "W100", "name": "Donnafugata 'Anthilia' 2023", "color": "white", "body": "medium", "texture": NaN, "flavor": "fruity", "region": "Sicilia", "price": 1150, "priceLevel": "medium", "secondary": false, "btg": false, "btgPrice": NaN, "tags": ["stonefruit", "tropical"]}, {"id": "W110", "name": "Planeta 'La Segreta' Bianco 2023", "color": "white", "body": "medium", "texture": NaN, "flavor": "fruity", "region": "Sicilia", "price": 1100, "priceLevel": "medium", "secondary": false, "btg": false, "btgPrice": NaN, "tags": ["stonefruit"]}, {"id": "W170", "name": "Mastroberardino 'Mastro' Bianco 2023", "color": "white", "body": "light", "texture": NaN, "flavor": "mineral", "region": "Campania", "price": 900, "priceLevel": "entry", "secondary": false, "btg": false, "btgPrice": NaN, "tags": ["citrus", "mineral", "floral"]}, {"id": "W180", "name": "Masseria Li Veli Verdeca 2021", "color": "white", "body": "medium", "texture": NaN, "flavor": "mineral", "region": "Puglia", "price": 950, "priceLevel": "entry", "secondary": false, "btg": false, "btgPrice": NaN, "tags": ["mineral", "saline", "floral"]}, {"id": "W135P", "name": "Marina Cvetić Trebbiano d’Abruzzo Riserva 2021 (Premium)", "color": "white", "body": "full", "texture": NaN, "flavor": "fruity", "region": "Abruzzo", "price": 2100, "priceLevel": "premium", "secondary": false, "btg": false, "btgPrice": NaN, "tags": ["oak", "buttery", "vanilla", "stonefruit"]}, {"id": "W70P", "name": "Schäfer-Fröhlich Riesling 2021 (Premium)", "color": "white", "body": "light", "texture": NaN, "flavor": "mineral", "region": "Nahe", "price": 1850, "priceLevel": "premium", "secondary": false, "btg": false, "btgPrice": NaN, "tags": ["citrus", "floral", "mineral", "saline"]}, {"id": "W130P", "name": "Marina Cvetić Chardonnay 2021 (Premium)", "color": "white", "body": "full", "texture": NaN, "flavor": "fruity", "region": "Abruzzo", "price": 2300, "priceLevel": "premium", "secondary": false, "btg": false, "btgPrice": NaN, "tags": ["oak", "stonefruit", "buttery", "vanilla"]}, {"id": "ROS1", "name": "Barba – Cerasuolo d’Abruzzo", "color": "rose", "body": "light", "texture": NaN, "flavor": "fruity", "region": "Abruzzo", "price": 600, "priceLevel": "entry", "secondary": false, "btg": true, "btgPrice": 120.0, "tags": ["redfruit", "floral"]}, {"id": "R80", "name": "Poggiotondo – Chianti 2023", "color": "red", "body": "medium", "texture": "tannin", "flavor": NaN, "region": "Toscana", "price": 990, "priceLevel": "entry", "secondary": false, "btg": false, "btgPrice": NaN, "tags": ["redfruit", "earthy", "spice", "floral"]}, {"id": "R50", "name": "La Prendina – Cabernet Garda 2019", "color": "red", "body": "medium-full", "texture": "tannin", "flavor": NaN, "region": "Lombardia", "price": 820, "priceLevel": "medium", "secondary": false, "btg": false, "btgPrice": NaN, "tags": ["oak", "spice", "darkfruit", "pepper", "chocolate"]}, {"id": "R20", "name": "Umani Ronchi 'Montipagano' – Montepulciano d’Abruzzo 2024", "color": "red", "body": "medium", "texture": "smooth", "flavor": NaN, "region": "Abruzzo", "price": 650, "priceLevel": "entry", "secondary": false, "btg": true, "btgPrice": 130.0, "tags": ["spice", "darkfruit", "redfruit"]}, {"id": "R40", "name": "Masseria Li Veli 'Orion' – Primitivo 2022", "color": "red", "body": "full", "texture": "tannin", "flavor": NaN, "region": "Puglia", "price": 650, "priceLevel": "entry", "secondary": false, "btg": false, "btgPrice": NaN, "tags": ["oak", "spice", "darkfruit", "chocolate"]}, {"id": "R100", "name": "Donnafugata 'Sherazade' – Nero d’Avola 2022", "color": "red", "body": "medium-full", "texture": "smooth", "flavor": NaN, "region": "Sicilia", "price": 1150, "priceLevel": "medium", "secondary": false, "btg": false, "btgPrice": NaN, "tags": ["herbal", "darkfruit", "redfruit"]}, {"id": "R120", "name": "Tommasi – Valpolicella Ripasso 2018", "color": "red", "body": "medium-full", "texture": "smooth", "flavor": NaN, "region": "Veneto", "price": 1400, "priceLevel": "medium", "secondary": false, "btg": false, "btgPrice": NaN, "tags": ["oak", "driedfruit", "spice", "chocolate"]}, {"id": "R130", "name": "Luccarelli – Negroamaro 2023", "color": "red", "body": "medium-full", "texture": "smooth", "flavor": NaN, "region": "Puglia", "price": 650, "priceLevel": "entry", "secondary": false, "btg": true, "btgPrice": 140.0, "tags": ["herbal", "darkfruit", "balsamic", "sweetspice"]}, {"id": "R150", "name": "Villa Antinori Rosso – Sangiovese & Cabernet 2022", "color": "red", "body": "medium-full", "texture": "tannin", "flavor": NaN, "region": "Toscana", "price": 1000, "priceLevel": "medium", "secondary": false, "btg": false, "btgPrice": NaN, "tags": ["darkfruit", "oak", "spice"]}, {"id": "R160", "name": "Le Quattro Terre – Barbera d’Asti 2019", "color": "red", "body": "medium", "texture": "smooth", "flavor": NaN, "region": "Piemonte", "price": 850, "priceLevel": "entry", "secondary": false, "btg": false, "btgPrice": NaN, "tags": ["redfruit", "spice", "earthy"]}, {"id": "R170", "name": "Sanlorenzo – Rosso Conero 2021", "color": "red", "body": "medium-full", "texture": "tannin", "flavor": NaN, "region": "Marche", "price": 950, "priceLevel": "medium", "secondary": false, "btg": false, "btgPrice": NaN, "tags": ["darkfruit", "spice", "earthy"]}, {"id": "R220P", "name": "Bric Cenciurio – Barolo 2014 (Premium)", "color": "red", "body": "full", "texture": "tannin", "flavor": NaN, "region": "Piemonte", "price": 2800, "priceLevel": "premium", "secondary": false, "btg": false, "btgPrice": NaN, "tags": ["earthy", "spice", "oak", "tobacco", "licorice"]}, {"id": "R235P", "name": "Capanna – Brunello di Montalcino 2018 (Premium)", "color": "red", "body": "full", "texture": "tannin", "flavor": NaN, "region": "Toscana", "price": 2900, "priceLevel": "premium", "secondary": false, "btg": false, "btgPrice": NaN, "tags": ["oak", "earthy", "tannin", "leather", "tobacco"]}, {"id": "R245P", "name": "Tommaso Bojola – Chianti Classico Riserva DOCG 2012 (Premium)", "color": "red", "body": "full", "texture": "tannin", "flavor": NaN, "region": "Toscana", "price": 1700, "priceLevel": "premium", "secondary": false, "btg": false, "btgPrice": NaN, "tags": ["redfruit", "earthy", "oak", "tobacco"]}, {"id": "R255P", "name": "Rudolf Fürst – Spätburgunder (Pinot Noir) 2021 (Premium)", "color": "red", "body": "medium", "texture": "smooth", "flavor": NaN, "region": "Germany - Franken", "price": 2100, "priceLevel": "premium", "secondary": false, "btg": false, "btgPrice": NaN, "tags": ["redfruit", "floral", "earthy"]}, {"id": "R210P", "name": "Tommasi – Amarone 2020 (Premium)", "color": "red", "body": "full", "texture": "smooth", "flavor": NaN, "region": "Veneto", "price": 1950, "priceLevel": "premium", "secondary": false, "btg": false, "btgPrice": NaN, "tags": ["oak", "driedfruit", "smooth", "chocolate"]}];
+  const SECONDARY_WINES = [{"id": "S1", "name": "Selbach Piesporter Michelsberg Riesling 2021", "color": "white", "body": "light", "texture": NaN, "flavor": "mineral", "region": "Germany", "price": 1000, "priceLevel": "medium", "secondary": true, "btg": false, "btgPrice": NaN, "tags": ["citrus", "floral", "mineral", "saline"]}, {"id": "S2", "name": "Isla de Maipo Chardonnay 2023 Organic", "color": "white", "body": "medium", "texture": NaN, "flavor": "fruity", "region": "Chile", "price": 750, "priceLevel": "entry", "secondary": true, "btg": false, "btgPrice": NaN, "tags": ["stonefruit", "citrus", "tropical"]}, {"id": "S3", "name": "False Bay Windswept Sauvignon Blanc 2021", "color": "white", "body": "light", "texture": NaN, "flavor": "fruity", "region": "South Africa", "price": 700, "priceLevel": "entry", "secondary": true, "btg": false, "btgPrice": NaN, "tags": ["citrus", "herbal", "saline"]}, {"id": "S4", "name": "False Bay Crystalline Chardonnay 2023", "color": "white", "body": "medium", "texture": NaN, "flavor": "fruity", "region": "South Africa", "price": 700, "priceLevel": "entry", "secondary": true, "btg": false, "btgPrice": NaN, "tags": ["stonefruit", "citrus", "mineral", "saline"]}, {"id": "S6", "name": "False Bay Slow Chenin Blanc 2020", "color": "white", "body": "medium", "texture": NaN, "flavor": "fruity", "region": "South Africa", "price": 700, "priceLevel": "entry", "secondary": true, "btg": false, "btgPrice": NaN, "tags": ["stonefruit", "tropical", "honeyed", "citrus"]}, {"id": "S7", "name": "DM Estate Sauvignon Blanc 2023", "color": "white", "body": "light", "texture": NaN, "flavor": "fruity", "region": "Chile", "price": 700, "priceLevel": "entry", "secondary": true, "btg": false, "btgPrice": NaN, "tags": ["citrus", "herbal", "saline"]}, {"id": "S8", "name": "Biface Bordeaux Blanc 2021", "color": "white", "body": "light", "texture": NaN, "flavor": "mineral", "region": "France", "price": 1100, "priceLevel": "medium", "secondary": true, "btg": false, "btgPrice": NaN, "tags": ["citrus", "herbal", "mineral"]}, {"id": "S9", "name": "Bourgogne Petit Chablis AOP 2020", "color": "white", "body": "medium", "texture": NaN, "flavor": "mineral", "region": "France", "price": 1150, "priceLevel": "premium", "secondary": true, "btg": false, "btgPrice": NaN, "tags": ["mineral", "citrus", "saline", "stonefruit"]}, {"id": "S10", "name": "Riesling Trocken Ökonomierat 2020", "color": "white", "body": "light", "texture": NaN, "flavor": "mineral", "region": "Germany", "price": 1100, "priceLevel": "medium", "secondary": true, "btg": false, "btgPrice": NaN, "tags": ["citrus", "mineral", "floral"]}, {"id": "S11", "name": "Malterdinger Weisser Burgunder 2020", "color": "white", "body": "medium", "texture": NaN, "flavor": "fruity", "region": "Germany", "price": 1500, "priceLevel": "premium", "secondary": true, "btg": false, "btgPrice": NaN, "tags": ["stonefruit", "floral", "mineral"]}, {"id": "S12", "name": "Zeltinger Sonnenuhr Riesling GG 2020", "color": "white", "body": "medium", "texture": NaN, "flavor": "mineral", "region": "Germany", "price": 1600, "priceLevel": "premium", "secondary": true, "btg": false, "btgPrice": NaN, "tags": ["citrus", "mineral", "saline", "floral"]}, {"id": "S13", "name": "Astheimer Chardonnay 2018", "color": "white", "body": "full", "texture": NaN, "flavor": "fruity", "region": "Germany", "price": 2000, "priceLevel": "premium", "secondary": true, "btg": false, "btgPrice": NaN, "tags": ["oak", "stonefruit", "buttery", "vanilla"]}, {"id": "S5", "name": "De Martino 'Limavida' Malbec 2014", "color": "red", "body": "full", "texture": "tannin", "flavor": NaN, "region": "Chile", "price": 1900, "priceLevel": "premium", "secondary": true, "btg": false, "btgPrice": NaN, "tags": ["darkfruit", "oak", "chocolate", "sweetspice", "leather"]}, {"id": "S14", "name": "'Individo' Rara Neagra, Malbec & Syrah 2018", "color": "red", "body": "full", "texture": "smooth", "flavor": NaN, "region": "Moldova", "price": 700, "priceLevel": "entry", "secondary": true, "btg": false, "btgPrice": NaN, "tags": ["darkfruit", "sweetspice", "chocolate"]}, {"id": "S15", "name": "'Individo' Bordeaux Blend", "color": "red", "body": "full", "texture": "tannin", "flavor": NaN, "region": "Moldova", "price": 700, "priceLevel": "entry", "secondary": true, "btg": false, "btgPrice": NaN, "tags": ["oak", "darkfruit", "spice"]}, {"id": "S16", "name": "'Individo' Saperavi", "color": "red", "body": "full", "texture": "tannin", "flavor": NaN, "region": "Moldova", "price": 850, "priceLevel": "medium", "secondary": true, "btg": false, "btgPrice": NaN, "tags": ["darkfruit", "licorice", "oak"]}, {"id": "S17", "name": "DM Estate Carmenere 2022", "color": "red", "body": "medium-full", "texture": "smooth", "flavor": NaN, "region": "Chile", "price": 800, "priceLevel": "entry", "secondary": true, "btg": false, "btgPrice": NaN, "tags": ["herbal", "darkfruit", "pepper"]}, {"id": "S18", "name": "False Bay Old School Syrah 2022", "color": "red", "body": "medium-full", "texture": "smooth", "flavor": NaN, "region": "South Africa", "price": 750, "priceLevel": "entry", "secondary": true, "btg": false, "btgPrice": NaN, "tags": ["pepper", "smoky", "darkfruit"]}, {"id": "S19", "name": "False Bay Bushvine Pinotage 2022", "color": "red", "body": "full", "texture": "tannin", "flavor": NaN, "region": "South Africa", "price": 750, "priceLevel": "entry", "secondary": true, "btg": false, "btgPrice": NaN, "tags": ["darkfruit", "smoky", "chocolate"]}, {"id": "S20", "name": "Cuvée Sabrine 2017 Côtes du Rhône AOC", "color": "red", "body": "medium-full", "texture": "smooth", "flavor": NaN, "region": "France", "price": 1000, "priceLevel": "medium", "secondary": true, "btg": false, "btgPrice": NaN, "tags": ["redfruit", "garrigue", "pepper", "sweetspice"]}, {"id": "S21", "name": "Chateau Plat Faisant Malbec AOC 2016", "color": "red", "body": "full", "texture": "tannin", "flavor": NaN, "region": "France", "price": 1000, "priceLevel": "medium", "secondary": true, "btg": false, "btgPrice": NaN, "tags": ["darkfruit", "oak", "chocolate", "sweetspice"]}, {"id": "S22", "name": "L'Heritage, Roussillon Villages AOC 2015", "color": "red", "body": "full", "texture": "tannin", "flavor": NaN, "region": "France", "price": 1450, "priceLevel": "premium", "secondary": true, "btg": false, "btgPrice": NaN, "tags": ["darkfruit", "garrigue", "pepper", "oak"]}, {"id": "S23", "name": "Spätburgunder Tradition 2020", "color": "red", "body": "medium", "texture": "smooth", "flavor": NaN, "region": "Germany", "price": 1500, "priceLevel": "premium", "secondary": true, "btg": false, "btgPrice": NaN, "tags": ["redfruit", "floral", "earthy"]}, {"id": "S24", "name": "Châteauneuf-du-Pape AOC Réservée 2019", "color": "red", "body": "full", "texture": "tannin", "flavor": NaN, "region": "France", "price": 1900, "priceLevel": "premium", "secondary": true, "btg": false, "btgPrice": NaN, "tags": ["darkfruit", "garrigue", "pepper", "oak", "licorice"]}];
+  const LOGO_URI = "data:image/jpeg;base64,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plVe0s7iBbKYAuwi823lLyo2SjDB2kFafIT7SHY9NXU/H3/QAsf/AAZP/wDI1d3Xjfwu+IN94wbWtL8QWTabq+kXIc28iPExsLsGW0l2OAeF3QOejTQy7eAAPZKxOmGwUUUUGgUUUUAf/9H9/KKKKACiiigArm9d8N6N4mhittbtRcLayrcQMGaOSGZQVEkUiFXjbazKSrAlWZT8rEHpKKAOZ0/w1o+lzPcWkJMkkK27tJI8zGJHd1TMhY4DSOfxweAMUNC8CeFPDemNo+h6elpaPBDasiljmG3iEMSEsSSFjAUZ7V2tFPQz5EcTqHgTwvqdjpem3Vqyw6IMWXlTzQPABEYfkkidXH7tivXoa1b7w9pOpXOn3WoWy3MulSPNbM+T5cjxSQOwGcEmKV05B4Y10NFGgciPOrX4Y+C7O0aysdO+yI1pZWGYJZIWW0055ZLWFDGylUiaaTaowMMVOV4rcs/CegWn9mm3slQ6QHFqRn90ZQQ5HPVgTknk55rpsmjJqeZlcsexw/8Awr3wb9r+1/2YmPtP23ytz/Z/tXmeb53kZ8vzPN/e7tufM/eff+aorn4b+C7uJYp9KiKo9/IMFg2dUdpLwEg5KTuxZ0OVJCnHyrj0CitOYOSPY5PUPB/h7VNTTWNQtFkvI44olkywISGdLmMcEfdljVh6EcdTkk8J+Hn1DU9UWwiW91m3jtLuYIA80MJkMSuR1CGV8d/m9MY6yioDlj2OHuvAfhi7utPvZLZ47jS4fs9u8VxNCVhJU+W3luodcovytkcVvnSNOOsLr3kL9uSBrYS4+YROyuyfQsqn8K2aKCeRHnd/8M/BupahbapcWDLdWj3MsUsU80LI92FWYjy3Xl1UAnqBkDGTmKH4W+DYNTl1iC2uIb25W3WWVb26DyC1UrCJCJfnCgnhsgksTksxPo2TRk0uZlckex57H8MvBccU8C6efJuL1dReJppnhF4l4NQWZImcojC6US/IB81Sp8OPBqTNONLiBY3pIAIQnUpFlvPkztxPIoeTj5mJJ6nPoFFaczFyR7GGuhaXHrkviKO3UajNCls838TRRszIp9lLsR9T61uUUVBYUUUUAFFFFAH/0v38ooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP/0/38ooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP/1P38ooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP/2Q==";
+  </script>
+
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script type="text/babel">
+  const { useState, useMemo, useEffect } = React;
+
+  const RED_APPELLATIONS = ["Brunello","Barolo","Chianti","Pinot Noir","Cabernet Sauvignon","Negroamaro","Nero d'Avola","Syrah"];
+  const WHITE_APPELLATIONS = ["Sauvignon Blanc","Pinot Grigio","Chardonnay","Riesling","Trebbiano/Fiano","Chenin Blanc"];
+
+  const TAGS = {
+    oak: { key:"oak", label:"Oak" }, floral:{ key:"floral", label:"Floral" },
+    herbal:{ key:"herbal", label:"Herbal" }, citrus:{ key:"citrus", label:"Citrus" },
+    tropical:{ key:"tropical", label:"Tropical" }, stonefruit:{ key:"stonefruit", label:"Stone-fruit" },
+    earthy:{ key:"earthy", label:"Earthy" }, pepper:{ key:"pepper", label:"Pepper/Spice" },
+    smoky:{ key:"smoky", label:"Smoky" }, saline:{ key:"saline", label:"Saline" },
+    mineral:{ key:"mineral", label:"Mineral" }, redfruit:{ key:"redfruit", label:"Red fruit" },
+    darkfruit:{ key:"darkfruit", label:"Dark fruit" }, driedfruit:{ key:"driedfruit", label:"Dried fruit" },
+    sweetspice:{ key:"sweetspice", label:"Sweet spice" }, balsamic:{ key:"balsamic", label:"Balsamic" },
+    licorice:{ key:"licorice", label:"Licorice" }, leather:{ key:"leather", label:"Leather" },
+    tobacco:{ key:"tobacco", label:"Tobacco" }, mineraliron:{ key:"mineraliron", label:"Mineral (iron)" },
+    chocolate:{ key:"chocolate", label:"Chocolate/Coffee" }, buttery:{ key:"buttery", label:"Buttery" },
+    vanilla:{ key:"vanilla", label:"Vanilla" }
+  };
+
+  const NOTES_FOR_RED = ["oak","earthy","pepper","smoky","redfruit","darkfruit","driedfruit","sweetspice","balsamic","licorice","leather","tobacco","chocolate","herbal","mineraliron"].map(k=>TAGS[k]);
+  const NOTES_FOR_WHITE = ["floral","citrus","tropical","stonefruit","saline","mineral","buttery","vanilla"].map(k=>TAGS[k]);
+
+  const nameSet = new Set(PRIMARY_WINES.map(w => (w.name||"").toLowerCase()));
+  const MERGED_WINES = [...PRIMARY_WINES, ...SECONDARY_WINES.filter(w => !nameSet.has((w.name||"").toLowerCase()))];
+
+  function isSparklingName(name="") { return /\b(prosecco|spumante|brut|franciacorta|sparkling)\b/i.test(name); }
+
+  function prefProfile(context){
+    if (!context) return null;
+    const { pref, chardonnayStyle } = context;
+    if (!pref) return null;
+    const p = pref.toLowerCase();
+    if (p==="barolo" || p==="brunello") return { wantPrice:"premium", wantBody:"full", wantTexture:"tannin", wantTags:["oak","earthy","tobacco","licorice","leather"] };
+    if (p==="chianti" || p==="pinot noir") return { wantPrice:"medium", wantBody:"medium", wantTexture:"smooth", wantTags:["redfruit","earthy","floral"] };
+    if (p==="negroamaro" || p==="nero d'avola" || p==="syrah") return { wantPrice:"entry", wantBody:"full", wantTexture:"smooth", wantTags:["darkfruit","sweetspice","pepper","chocolate"] };
+    if (p==="cabernet sauvignon") return { wantPrice:"medium", wantBody:"full", wantTexture:"tannin", wantTags:["oak","darkfruit","spice"] };
+    if (p==="sauvignon blanc") return { wantPrice:"entry", wantBody:"light", wantTags:["citrus","herbal","saline","mineral"] };
+    if (p==="pinot grigio") return { wantPrice:"entry", wantBody:"light", wantTags:["citrus","mineral","saline"] };
+    if (p==="chardonnay") {
+      if (chardonnayStyle==="oaked") return { wantPrice:"medium", wantBody:"full", wantTags:["oak","buttery","vanilla","stonefruit"] };
+      return { wantPrice:"medium", wantBody:"medium", wantTags:["stonefruit","citrus","mineral"] };
+    }
+    if (p==="riesling") return { wantPrice:"medium", wantBody:"light", wantTags:["citrus","floral","mineral","saline"] };
+    if (p==="trebbiano/fiano") return { wantPrice:"entry", wantBody:"medium", wantTags:["floral","mineral","saline","stonefruit"] };
+    if (p==="chenin blanc") return { wantPrice:"entry", wantBody:"medium", wantTags:["stonefruit","tropical","honeyed","citrus"] };
+    return null;
+  }
+  function scoreByTags(w, wantTags) {
+    if (!wantTags || !wantTags.length) return 0;
+    const WEIGHT = { oak: 2, pepper: 1.5, buttery: 1.2, vanilla: 1.2 };
+    const tags = w.tags || [];
+    return wantTags.reduce((s,t) => s + (tags.includes(t) ? (WEIGHT[t]||1) : 0), 0);
+  }
+  function scoreByPrefHeuristics(w, context){
+    const profile = prefProfile(context);
+    if (!profile) return 0;
+    let s = 0;
+    if (profile.wantPrice==="premium" && w.priceLevel==="premium") s += 3;
+    if (profile.wantPrice==="medium" && w.priceLevel!=="entry") s += 1;
+    const order = ["light","medium","medium-full","full"];
+    const close = (a,b)=>{ const ia = order.indexOf(a), ib = order.indexOf(b); if (ia<0||ib<0) return 0; return Math.abs(ia-ib)<=1 ? 1 : 0; };
+    if (profile.wantBody && w.body===profile.wantBody) s += 2; else if (profile.wantBody && close(w.body, profile.wantBody)) s += 1;
+    if (profile.wantTexture && w.texture===profile.wantTexture) s += 2;
+    s += scoreByTags(w, profile.wantTags||[]);
+    return s;
+  }
+  function scoreByAppellationName(w, pref){
+    if (!pref) return 0;
+    const name = (w.name||"").toLowerCase();
+    return name.includes(pref.toLowerCase()) ? 5 : 0;
+  }
+  function scoreWine(w, selectedTags, context){
+    return scoreByTags(w, selectedTags) + scoreByAppellationName(w, context?.pref) + scoreByPrefHeuristics(w, context);
+  }
+
+  async function fetchWines(filters, selectedTags, context) {
+    const match = (w, f) => {
+      for (const [k,v] of Object.entries(f)) { if (!v) continue; if (w[k] !== v) return false; }
+      return true;
+    };
+    await new Promise(r=>setTimeout(r,30));
+    let pool = MERGED_WINES.filter(w=>match(w, filters));
+    if (pool.length<6 && filters.color==='white'){
+      const relaxed = { ...filters }; delete relaxed.flavor;
+      pool = [...new Set([...pool, ...MERGED_WINES.filter(w=>match(w, relaxed))])];
+    }
+    if (context?.pref){
+      const prefLower = context.pref.toLowerCase();
+      const nameHasPref = w => (w.name||"").toLowerCase().includes(prefLower);
+      const sameColorPref = MERGED_WINES.filter(w=>(!filters.color || w.color===filters.color) && nameHasPref(w));
+      const anyColorPref = MERGED_WINES.filter(w=>nameHasPref(w));
+      pool = [...new Set([...pool, ...sameColorPref, ...anyColorPref])];
+    }
+    if (pool.length<6 && filters.color){
+      const relaxed2 = { color: filters.color };
+      pool = [...new Set([...pool, ...MERGED_WINES.filter(w=>match(w, relaxed2))])];
+    }
+    if (pool.length<6) pool = [...new Set([...pool, ...MERGED_WINES])];
+
+    const ranked = pool.map(w => ({ w, s: scoreWine(w, selectedTags, context) }))
+                       .sort((a,b)=> b.s - a.s || (a.w.price||0) - (b.w.price||0));
+
+    const primary = ranked.filter(x=>!x.w.secondary).map(x=>x.w);
+    const secondary = ranked.filter(x=>x.w.secondary).map(x=>x.w);
+
+    let pickPrimary = primary.slice(0,4);
+    let pickSecondary = secondary.slice(0,2);
+    if (pickPrimary.length<4){ const need = 4 - pickPrimary.length; pickSecondary = [...pickSecondary, ...secondary.slice(2, 2+need)]; }
+    if (pickSecondary.length<2){ const need = 2 - pickSecondary.length; pickPrimary = [...pickPrimary, ...primary.slice(4, 4+need)]; }
+
+    const combined = [...pickPrimary, ...pickSecondary].slice(0,6).sort((a,b)=> (a.price||0) - (b.price||0));
+    return combined;
+  }
+
+  function Header({ onHome, showHome }){
+    return (
+      <div className="sticky-header bg-white/80 border-b">
+        <div className="max-w-4xl mx-auto px-4 py-3 relative flex items-center justify-center">
+          <img src={LOGO_URI} alt="La Cala" className="h-10 object-contain" />
+          {showHome && <button onClick={onHome} className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-neutral-700 px-3 py-1 rounded-lg border hover:bg-neutral-100">Home</button>}
+        </div>
+      </div>
+    );
+  }
+
+  function Card({ title, children }) {
+    return (
+      <div className="border rounded-2xl p-4 shadow-sm bg-white">
+        {title && <div className="text-base font-semibold mb-3">{title}</div>}
+        {children}
+      </div>
+    );
+  }
+  function ChoiceButton({ children, onClick }) {
+    return (
+      <button onClick={onClick} className="w-full px-4 py-4 rounded-2xl border transition shadow-sm text-base bg-white hover:bg-rose-50 active:scale-[0.99]">
+        {children}
+      </button>
+    );
+  }
+  function TagList({ list }) {
+    return (
+      <div className="mt-2 flex flex-wrap gap-1.5">
+        {(list||[]).slice(0,6).map(t => <span key={t} className="px-2 py-0.5 text-xs rounded-full bg-neutral-100">{t}</span>)}
+      </div>
+    );
+  }
+  function WineCard({ w, showCellarNote=false }){
+    return (
+      <div className="border rounded-xl p-4">
+        <div className="text-xs uppercase tracking-wide text-neutral-500 mb-1">
+          {!w.secondary ? (w.priceLevel || 'Primary') : 'B26 cellar'}
+        </div>
+        <div className="font-semibold">{w.name}</div>
+        {w.secondary && showCellarNote && <div className="text-xs text-rose-700 mt-0.5">Available in B26 wine cellar</div>}
+        <div className="text-sm text-neutral-600">{w.region || ""}</div>
+        <div className="text-sm mt-1 capitalize">{w.color}{w.body?` · ${w.body}`:""}{w.texture?` · ${w.texture}`:""}{w.flavor?` · ${w.flavor}`:""}</div>
+        <TagList list={w.tags}/>
+        {w.price && <div className="mt-2 text-rose-700 font-semibold">{w.price}k VND</div>}
+      </div>
+    );
+  }
+
+  function BTGPage({ onHome }){
+    const items = PRIMARY_WINES.filter(w => w.btg);
+    const groups = [
+      { key:"Sparkling", icon:"🥂", filter:(w)=> w.btg && (isSparklingName(w.name) || (w.color==="white" && /prosecco/i.test(w.name))) },
+      { key:"White Wine", icon:"🍏", filter:(w)=> w.btg && w.color==="white" && !isSparklingName(w.name) },
+      { key:"Rosé", icon:"🪻", filter:(w)=> w.btg && (w.color==="rose" || /cerasuolo|ros[eé]/i.test(w.name)) },
+      { key:"Red Wine", icon:"🍷", filter:(w)=> w.btg && w.color==="red" },
+    ];
+    return (
+      <div>
+        <Header onHome={onHome} showHome />
+        <div className="max-w-4xl mx-auto p-4 space-y-6">
+          {groups.map(g=>{
+            const list = items.filter(g.filter);
+            if (!list.length) return null;
+            return (
+              <div key={g.key}>
+                <h3 className="text-lg font-bold mb-2">{g.icon} {g.key}</h3>
+                <div className="space-y-3">
+                  {list.map(w => (
+                    <div key={w.id} className="border rounded-xl p-3 bg-white shadow-sm">
+                      <div className="font-semibold">{w.name}</div>
+                      <div className="text-sm text-neutral-600">{(w.btgPrice||"—")}k / glass · {(w.price||"—")}k / bottle</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  function FullList({ onHome }){
+    const [color, setColor] = useState(null);
+    const [q, setQ] = useState("");
+    const [includeB26, setIncludeB26] = useState(true);
+
+    function getFullList(color){
+      const primary = PRIMARY_WINES.filter(w=>w.color===color).sort((a,b)=>(a.price||0)-(b.price||0));
+      const secondary = includeB26 ? SECONDARY_WINES.filter(w=>w.color===color).sort((a,b)=>(a.price||0)-(b.price||0)) : [];
+      return [...primary, ...secondary];
+    }
+    const list = useMemo(()=>{
+      if (!color) return [];
+      const base = getFullList(color);
+      if (!q) return base;
+      const s = q.trim().toLowerCase();
+      return base.filter(w =>
+        (w.name||"").toLowerCase().includes(s) ||
+        (w.region||"").toLowerCase().includes(s) ||
+        ((Array.isArray(w.tags)? w.tags.join(" ") : "").toLowerCase().includes(s))
+      );
+    },[color,q,includeB26]);
+
+    return (
+      <div>
+        <Header onHome={onHome} showHome />
+        <div className="max-w-4xl mx-auto p-4 space-y-4">
+          {!color ? (
+            <Card title="Choose a color">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <ChoiceButton onClick={()=>setColor("white")}>White</ChoiceButton>
+                <ChoiceButton onClick={()=>setColor("red")}>Red</ChoiceButton>
+              </div>
+              <div className="mt-3 text-xs text-neutral-500">Order: Primary first, then B26 (if enabled). Inside each: price low → high.</div>
+            </Card>
+          ) : (
+            <>
+              <div className="flex flex-col gap-3">
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <button onClick={()=>setColor(null)} className="px-3 py-2 rounded-lg border bg-white hover:bg-neutral-50 w-full sm:w-auto">← Change color</button>
+                  <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search name, region or tags…" className="flex-1 px-3 py-2 rounded-lg border outline-none" />
+                </div>
+
+                <div className="flex items-center gap-3 text-sm">
+                  <span className="text-neutral-700">Include B26 cellar</span>
+                  <button
+                    onClick={() => setIncludeB26(v => !v)}
+                    className={`w-12 h-7 rounded-full border relative transition ${includeB26 ? 'bg-rose-600 border-rose-600' : 'bg-white'}`}
+                    aria-pressed={includeB26}
+                  >
+                    <span className={`absolute top-0.5 left-0.5 h-6 w-6 rounded-full bg-white shadow transition ${includeB26 ? 'translate-x-5' : ''}`}></span>
+                  </button>
+                  <span className="text-neutral-500">({includeB26 ? 'Primary + B26' : 'Only Primary'})</span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+                {list.map(w => <WineCard key={(w.id || '') + w.name} w={w} showCellarNote/>)}
+              </div>
+              {list.length===0 && <div className="text-neutral-500 text-sm">No results for “{q}”.</div>}
+            </>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  function GuidedSelection({ onHome }){
+    const [step, setStep] = useState(0);
+    const [answers, setAnswers] = useState({ color: undefined, body: undefined, texture: undefined, flavor: undefined, appellationPref: undefined, chardonnayStyle: undefined });
+    const [selectedTags, setSelectedTags] = useState([]);
+    const [results, setResults] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    const steps = useMemo(()=>{
+      if (!answers.color) return ["color"];
+      if (answers.color==='white'){
+        const arr = ["color","pref"];
+        if (answers.appellationPref==="Chardonnay") arr.push("chardStyle");
+        arr.push("bodyWhite","flavorWhite","notes","price");
+        return arr;
+      } else {
+        return ["color","pref","bodyRed","textureRed","notes","price"];
+      }
+    },[answers.color, answers.appellationPref]);
+    const progress = steps.length ? Math.round(((step+1)/steps.length)*100) : 0;
+
+    function advance(update){
+      setAnswers(prev => {
+        const next = { ...prev, ...update };
+        if (update.color){
+          next.body = next.texture = next.flavor = next.appellationPref = next.chardonnayStyle = undefined;
+          setSelectedTags([]);
+        }
+        if (update.appellationPref && update.appellationPref!=="Chardonnay") next.chardonnayStyle = undefined;
+        const nextSteps = !next.color ? ["color"]
+          : (next.color==='white' ? (()=>{ const a=["color","pref"]; if (next.appellationPref==="Chardonnay") a.push("chardStyle"); a.push("bodyWhite","flavorWhite","notes","price"); return a; })() : ["color","pref","bodyRed","textureRed","notes","price"]);
+        setStep(s => Math.min(s + 1, nextSteps.length - 1));
+        return next;
+      });
+    }
+    function goBack(){ setStep(s => Math.max(0, s - 1)); }
+
+    useEffect(()=>{
+      const last = steps[steps.length-1];
+      if (last==='price' && step===steps.length-1){
+        (async()=>{
+          setLoading(true);
+          const filters = { color: answers.color, body: answers.body, texture: answers.texture, flavor: answers.flavor };
+          const context = { pref: answers.appellationPref, chardonnayStyle: answers.chardonnayStyle };
+          const data = await fetchWines(filters, selectedTags, context);
+          setResults(data);
+          setLoading(false);
+        })();
+      }
+    }},[step, steps, selectedTags, answers]);
+
+    const NOTES_RED = NOTES_FOR_RED;
+    const NOTES_WHITE = NOTES_FOR_WHITE;
+
+    return (
+      <div>
+        <Header onHome={onHome} showHome />
+        <div className="max-w-4xl mx-auto p-4 space-y-4">
+          <div className="w-full h-2 bg-neutral-200 rounded-full overflow-hidden">
+            <div className="h-full bg-rose-600" style={{ width: `${progress}%` }}></div>
+          </div>
+
+          {!answers.color && (
+            <Card title="Choose Color">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <ChoiceButton onClick={()=>advance({ color: 'white' })}>White 🥂</ChoiceButton>
+                <ChoiceButton onClick={()=>advance({ color: 'red' })}>Red 🍷</ChoiceButton>
+              </div>
+            </Card>
+          )}
+
+          {answers.color && steps[step]==='pref' && (
+            <Card title="What kind of wine do you like to drink?">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {(answers.color==='red'?RED_APPELLATIONS:WHITE_APPELLATIONS).map(p => (
+                  <ChoiceButton key={p} onClick={()=>advance({ appellationPref: p })}>{p}</ChoiceButton>
+                ))}
+                <ChoiceButton onClick={()=>advance({ appellationPref: undefined })}>I am not sure</ChoiceButton>
+              </div>
+              <div className="mt-3">
+                <button onClick={goBack} className="text-sm text-neutral-700 px-3 py-1 rounded-lg border">Back</button>
+              </div>
+            </Card>
+          )}
+
+          {steps[step]==='chardStyle' && (
+            <Card title="Chardonnay → Style">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <ChoiceButton onClick={()=>advance({ chardonnayStyle: 'unoaked' })}>Unoaked (fresh)</ChoiceButton>
+                <ChoiceButton onClick={()=>advance({ chardonnayStyle: 'oaked' })}>Oaked (vanilla/butter)</ChoiceButton>
+              </div>
+              <div className="mt-3"><button onClick={goBack} className="text-sm text-neutral-700 px-3 py-1 rounded-lg border">Back</button></div>
+            </Card>
+          )}
+
+          {steps[step]==='bodyWhite' && (
+            <Card title="White → Body">
+              <div className="grid grid-cols-3 gap-3">
+                <ChoiceButton onClick={()=>advance({ body: 'light' })}>Light</ChoiceButton>
+                <ChoiceButton onClick={()=>advance({ body: 'medium' })}>Medium</ChoiceButton>
+                <ChoiceButton onClick={()=>advance({ body: 'full' })}>Full</ChoiceButton>
+              </div>
+              <div className="mt-3"><button onClick={goBack} className="text-sm text-neutral-700 px-3 py-1 rounded-lg border">Back</button></div>
+            </Card>
+          )}
+
+          {steps[step]==='flavorWhite' && (
+            <Card title="White → Flavor">
+              <div className="grid grid-cols-2 gap-3">
+                <ChoiceButton onClick={()=>advance({ flavor: 'mineral' })}>Mineral ⛏️</ChoiceButton>
+                <ChoiceButton onClick={()=>advance({ flavor: 'fruity' })}>Fruity 🍋🍑</ChoiceButton>
+              </div>
+              <div className="mt-3"><button onClick={goBack} className="text-sm text-neutral-700 px-3 py-1 rounded-lg border">Back</button></div>
+            </Card>
+          )}
+
+          {steps[step]==='bodyRed' && (
+            <Card title="Red → Body">
+              <div className="grid grid-cols-3 gap-3">
+                <ChoiceButton onClick={()=>advance({ body: 'medium' })}>Medium</ChoiceButton>
+                <ChoiceButton onClick={()=>advance({ body: 'medium-full' })}>Medium-Full</ChoiceButton>
+                <ChoiceButton onClick={()=>advance({ body: 'full' })}>Full</ChoiceButton>
+              </div>
+              <div className="mt-3"><button onClick={goBack} className="text-sm text-neutral-700 px-3 py-1 rounded-lg border">Back</button></div>
+            </Card>
+          )}
+
+          {steps[step]==='textureRed' && (
+            <Card title="Red → Texture">
+              <div className="grid grid-cols-2 gap-3">
+                <ChoiceButton onClick={()=>advance({ texture: 'tannin' })}>Tannin (grip)</ChoiceButton>
+                <ChoiceButton onClick={()=>advance({ texture: 'smooth' })}>Smooth</ChoiceButton>
+              </div>
+              <div className="mt-3"><button onClick={goBack} className="text-sm text-neutral-700 px-3 py-1 rounded-lg border">Back</button></div>
+            </Card>
+          )}
+
+          {steps[step]==='notes' && (
+            <Card title="Optional: pick up to 6 notes">
+              <div className="flex flex-wrap gap-2 mb-2">
+                {(answers.color==='red' ? NOTES_FOR_RED : NOTES_FOR_WHITE).map(t => (
+                  <button key={t.key}
+                    onClick={()=>{
+                      setSelectedTags(prev => {
+                        const has = prev.includes(t.key);
+                        if (has) return prev.filter(x=>x!==t.key);
+                        if (prev.length>=6) return prev;
+                        return [...prev, t.key];
+                      });
+                    }}
+                    className={`px-3 py-1 rounded-full border text-sm ${selectedTags.includes(t.key) ? 'bg-rose-600 text-white border-rose-600' : 'bg-white hover:bg-rose-50'}`}
+                  >{t.label}</button>
+                ))}
+              </div>
+              <div className="text-xs text-neutral-500">Selected: {selectedTags.join(', ') || 'none'}</div>
+              <div className="mt-3 flex gap-2">
+                <button onClick={()=>setStep(s=>Math.min(s+1, steps.length-1))} className="px-4 py-2 rounded-xl bg-rose-600 text-white">Continue</button>
+                <button onClick={goBack} className="text-sm text-neutral-700 px-3 py-1 rounded-lg border">Back</button>
+              </div>
+            </Card>
+          )}
+
+          {steps[step]==='price' && (
+            <Card title={`Results: (${results.length})`}>
+              {loading && <p className="text-neutral-500">Searching…</p>}
+              {!loading && results.length===0 && <p className="text-neutral-500">No exact match. Showing closest styles.</p>}
+              {!loading && results.length>0 && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {results.map(w => <WineCard key={(w.id || '') + w.name} w={w} showCellarNote />)}
+                </div>
+              )}
+              <div className="mt-4 flex flex-col sm:flex-row gap-3">
+                <button onClick={()=>{ setStep(0); setSelectedTags([]); setAnswers({ color: undefined, body: undefined, texture: undefined, flavor: undefined, appellationPref: undefined, chardonnayStyle: undefined }); setResults([]); }} className="px-4 py-2 rounded-xl bg-neutral-200 hover:bg-neutral-300">Start Over</button>
+                <button onClick={onHome} className="px-4 py-2 rounded-xl bg-rose-600 text-white hover:bg-rose-700">Home</button>
+              </div>
+            </Card>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  function Home({ go }){
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header showHome={false} />
+        <div className="flex-1 max-w-4xl mx-auto p-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <ChoiceButton onClick={()=>go('btg')}>1) By the Glass</ChoiceButton>
+            <ChoiceButton onClick={()=>go('full')}>2) Full List</ChoiceButton>
+            <ChoiceButton onClick={()=>go('guided')}>3) Guided Selection</ChoiceButton>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  function App(){
+    const [screen, setScreen] = useState("home");
+    return (
+      <div className="min-h-screen flex flex-col">
+        {screen==="home" ? <Home go={setScreen}/> :
+          screen==="btg" ? <BTGPage onHome={()=>setScreen('home')} /> :
+          screen==="full" ? <FullList onHome={()=>setScreen('home')} /> :
+          <GuidedSelection onHome={()=>setScreen('home')} />
+        }
+      </div>
+    );
+  }
+
+  const root = ReactDOM.createRoot(document.getElementById('root'));
+  root.render(<App/>);
+  </script>
+</body>
+</html>
